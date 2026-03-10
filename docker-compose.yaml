@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    container_name: users_db_postgres
+    ports:
+      - "5432:5432"
+
+
