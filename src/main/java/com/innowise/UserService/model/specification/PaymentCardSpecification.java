@@ -7,9 +7,9 @@ public class PaymentCardSpecification {
 
     private PaymentCardSpecification() {}
 
-    public static Specification<PaymentCard> byNumber(Integer number) {
+    public static Specification<PaymentCard> byNumber(String number) {
         return (root, criteriaQuery, criteriaBuilder) -> {
-            if (number != null) {
+            if (number != null && !number.isBlank()) {
                 return criteriaBuilder.and(criteriaBuilder.like(root.get("number"), "%" + number + "%"));
             }
             return criteriaBuilder.conjunction();

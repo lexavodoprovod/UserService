@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-payment-card-number-type-to-varchar
+      author: Nikita
+      changes:
+        - modifyDataType:
+            tableName: payment_cards
+            columnName: number
+            newDataType: varchar(255)

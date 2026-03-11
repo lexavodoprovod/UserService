@@ -23,7 +23,7 @@ public class PaymentCard extends BaseEntity{
     private User user;
 
     @Column(nullable = false, length = 16)
-    private int number;
+    private String number;
 
     @Column(nullable = false)
     private String holder;
