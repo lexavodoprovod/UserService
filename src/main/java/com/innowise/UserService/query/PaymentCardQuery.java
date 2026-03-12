@@ -1,4 +1,4 @@
-package com.innowise.UserService.model.query;
+package com.innowise.UserService.query;
 
 public final class PaymentCardQuery {
     public static final String UPDATE_PAYMENT_CARD_BY_ID_NATIVE = """

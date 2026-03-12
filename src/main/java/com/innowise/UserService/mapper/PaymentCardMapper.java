@@ -1,4 +1,4 @@
-package com.innowise.UserService.model.mapper;
+package com.innowise.UserService.mapper;
 
 import com.innowise.UserService.model.dto.PaymentCardDto;
 import com.innowise.UserService.model.entity.PaymentCard;

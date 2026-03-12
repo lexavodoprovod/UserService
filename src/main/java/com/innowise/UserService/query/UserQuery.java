@@ -1,4 +1,4 @@
-package com.innowise.UserService.model.query;
+package com.innowise.UserService.query;
 
 public final class UserQuery {
 

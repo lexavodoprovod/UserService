@@ -1,11 +1,13 @@
 package com.innowise.UserService.model.service.impl;
 
+import com.innowise.UserService.exception.BusinessException;
+import com.innowise.UserService.exception.EntityNotFoundException;
 import com.innowise.UserService.model.dao.UserDao;
 import com.innowise.UserService.model.dto.UserDto;
 import com.innowise.UserService.model.entity.User;
-import com.innowise.UserService.model.mapper.UserMapper;
+import com.innowise.UserService.mapper.UserMapper;
 import com.innowise.UserService.model.service.UserService;
-import com.innowise.UserService.model.specification.UserSpecification;
+import com.innowise.UserService.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,13 +28,13 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
 
         if(userDto == null){
-            return null;
+            throw new BusinessException("[createUser] UserDto is null");
         }
 
         String email = userDto.getEmail();
 
         if(userDao.existsByEmail(email)){
-            return null;
+            throw new BusinessException("User with this email already exists");
         }
 
         User user = userMapper.toUser(userDto);
@@ -47,22 +48,22 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto getUserById(Long id) {
         if(id == null){
-            return null;
+            throw new  BusinessException("[getUserById] Id is null");
         }
 
-        Optional<User> userOpt = userDao.findUserById(id);
+        User user = userDao.findUserById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User", id));
 
-        if(userOpt.isPresent()){
-            User user = userOpt.get();
-            return userMapper.toUserDto(user);
-        }
-
-        return null;
+        return userMapper.toUserDto(user);
     }
 
     @Override
     @Transactional
     public Page<UserDto> getAllUsers(String name, String surname, Pageable pageable) {
+
+        if(name == null || surname == null || pageable == null){
+            throw new  BusinessException("[getAllUsers] Pageable, name or surname is null");
+        }
 
         Specification<User> userSpecification = UserSpecification.byNameAndSurname(name, surname);
 
@@ -76,30 +77,26 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto) {
 
       if(userDto == null){
-          return null;
+          throw new BusinessException("[updateUser] UserDto is null");
       }
 
       Long id = userDto.getId();
-      Optional<User> userOpt = userDao.findUserById(id);
 
-      if(userOpt.isPresent()){
-          User user = userOpt.get();
+      User user = userDao.findUserById(id)
+              .orElseThrow(() -> new EntityNotFoundException("User", id));
 
-          userMapper.updateUserFromDto(userDto, user);
+      userMapper.updateUserFromDto(userDto, user);
 
-          userDao.updateUserById(user);
+      userDao.save(user);
 
-          return userDto;
-      }
-
-        return null;
+      return userMapper.toUserDto(user);
     }
 
     @Override
     @Transactional
     public boolean activateUserById(Long id) {
         if(id == null){
-            return false;
+            throw new  BusinessException("[activateUserById] Id is null");
         }
 
         int success = userDao.activateUserById(id);
@@ -111,7 +108,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public boolean deactivateUserById(Long id) {
         if(id == null){
-            return false;
+            throw new  BusinessException("[deactivateUserById] Id is null");
         }
 
         int success = userDao.deactivateUserById(id);
