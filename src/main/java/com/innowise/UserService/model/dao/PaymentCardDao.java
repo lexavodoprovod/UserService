@@ -17,18 +17,6 @@ import java.util.Optional;
 @Repository
 public interface PaymentCardDao extends JpaRepository<PaymentCard, Long>, JpaSpecificationExecutor<PaymentCard> {
 
-    int MAX_COUNT_CARDS = 5;
-
-    default PaymentCard savePaymentCard(PaymentCard paymentCard){
-        long id = paymentCard.getUser().getId();
-        long countOfCards = countPaymentCardByUserId(id);
-
-        if(countOfCards >= MAX_COUNT_CARDS){
-            return null;
-        }
-        return save(paymentCard);
-    };
-
     Optional<PaymentCard> findPaymentCardById(Long id);
 
     List<PaymentCard> findAllByUserId(Long id);
