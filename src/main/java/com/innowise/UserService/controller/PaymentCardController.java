@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PaymentCardController {
 
-    private static final int PAGINATION_SIZE = 10;
+    private static final int PAGINATION_SIZE = 15;
     private static final String SORT_BY = "id";
 
     private final PaymentCardService paymentCardService;
@@ -47,7 +47,7 @@ public class PaymentCardController {
     @GetMapping
     public ResponseEntity<Page<PaymentCardDto>> getAllPaymentCards(
             @RequestParam(required = false) String number,
-            @PageableDefault(page = PAGINATION_SIZE, sort = SORT_BY) Pageable pageable) {
+            @PageableDefault(size = PAGINATION_SIZE, sort = SORT_BY) Pageable pageable) {
 
         Page<PaymentCardDto> paymentCardsPage = paymentCardService.getAllPaymentCards(number, pageable);
 
