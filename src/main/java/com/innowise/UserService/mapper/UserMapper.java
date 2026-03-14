@@ -12,11 +12,10 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "paymentCards", ignore = true)
-//    @Mapping(target = "createdAt", ignore = true)
-//    @Mapping(target = "updatedAt", ignore = true)
     User toUser(UserDto userDto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "paymentCards", ignore = true)
+    @Mapping(target = "active", ignore = true)
     void updateUserFromDto(UserDto userDto, @MappingTarget User user);
 }

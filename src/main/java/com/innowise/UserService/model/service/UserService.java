@@ -9,6 +9,8 @@ public interface UserService {
 
     UserDto getUserById(Long id);
 
+    UserDto getUserWithCardsById(Long id);
+
     Page<UserDto> getAllUsers(String name, String surname, Pageable pageable);
 
     UserDto updateUser(UserDto userDto);
@@ -16,4 +18,6 @@ public interface UserService {
     boolean activateUserById(Long id);
 
     boolean deactivateUserById(Long id);
+
+    UserDto deleteUserById(Long id);
 }

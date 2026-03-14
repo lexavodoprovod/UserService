@@ -10,7 +10,6 @@ import com.innowise.UserService.mapper.PaymentCardMapper;
 import com.innowise.UserService.model.entity.User;
 import com.innowise.UserService.model.service.PaymentCardService;
 import com.innowise.UserService.specification.PaymentCardSpecification;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,7 +65,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public PaymentCardDto getPaymentCardById(Long id) {
 
         if(id == null){
@@ -80,7 +79,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PaymentCardDto> getAllPaymentCardsByUserId(Long id) {
 
         if(id == null){
@@ -96,7 +95,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<PaymentCardDto> getAllPaymentCards(String number, Pageable pageable) {
 
         if(pageable == null){

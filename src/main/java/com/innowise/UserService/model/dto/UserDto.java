@@ -3,13 +3,17 @@ package com.innowise.UserService.model.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDto {
+public class UserDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Long id;
 
@@ -30,4 +34,6 @@ public class UserDto {
     private String email;
 
     private boolean active;
+
+    private List<PaymentCardDto> userPaymentCards;
 }

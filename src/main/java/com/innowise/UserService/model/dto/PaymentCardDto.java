@@ -4,13 +4,16 @@ import com.innowise.UserService.model.entity.User;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PaymentCardDto {
+public class PaymentCardDto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Long id;
 

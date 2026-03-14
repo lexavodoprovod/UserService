@@ -12,8 +12,6 @@ public interface PaymentCardMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
-//    @Mapping(target = "createdAt", ignore = true)
-//    @Mapping(target = "updatedAt", ignore = true)
     PaymentCard toPaymentCard(PaymentCardDto paymentCardDto);
 
     @Mapping(target = "id", ignore = true)

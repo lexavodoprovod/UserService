@@ -33,6 +33,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/user-with-cards/{id}")
+    public ResponseEntity<UserDto> getUserWithCards(@PathVariable Long id){
+        UserDto user = userService.getUserWithCardsById(id);
+        return ResponseEntity.ok(user);
+    }
+
     @GetMapping
     public ResponseEntity<Page<UserDto>> getAllUsers(
             @RequestParam(required = false) String name,
@@ -65,6 +71,12 @@ public class UserController {
         boolean success = userService.deactivateUserById(id);
 
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<UserDto> deleteUser(@PathVariable Long id){
+        UserDto user = userService.deleteUserById(id);
+        return ResponseEntity.ok(user);
     }
 
 }
