@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
 
-    private static final int PAGINATION_SIZE = 10;
+    private static final int PAGINATION_SIZE = 15;
     private static final String SORT_BY = "id";
 
     private final UserService userService;

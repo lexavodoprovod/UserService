@@ -99,7 +99,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     @Transactional
     public Page<PaymentCardDto> getAllPaymentCards(String number, Pageable pageable) {
 
-        if(number == null || pageable == null){
+        if(pageable == null){
             throw new BusinessException("[getAllPaymentCardsByUserId] Pageable or number is null");
         }
 

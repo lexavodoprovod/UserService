@@ -61,8 +61,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Page<UserDto> getAllUsers(String name, String surname, Pageable pageable) {
 
-        if(name == null || surname == null || pageable == null){
-            throw new  BusinessException("[getAllUsers] Pageable, name or surname is null");
+//        if(name == null || surname == null || pageable == null){
+//            throw new  BusinessException("[getAllUsers] Pageable, name or surname is null");
+//        }
+
+        if(pageable == null){
+            throw new  BusinessException("[getAllUsers] Pageable is null");
         }
 
         Specification<User> userSpecification = UserSpecification.byNameAndSurname(name, surname);
