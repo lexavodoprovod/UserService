@@ -37,13 +37,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto createUser(UserDto userDto) {
 
-        if(userDto == null){
+        if (userDto == null) {
             throw new BusinessException("[createUser] UserDto is null");
         }
 
         String email = userDto.getEmail();
 
-        if(userDao.existsByEmail(email)){
+        if (userDao.existsByEmail(email)) {
             throw new BusinessException("User with this email already exists");
         }
 
@@ -58,8 +58,8 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = "users", key = "#id")
     public UserDto getUserById(Long id) {
-        if(id == null){
-            throw new  BusinessException("[getUserById] Id is null");
+        if (id == null) {
+            throw new BusinessException("[getUserById] Id is null");
         }
 
         User user = userDao.findUserById(id)
@@ -71,9 +71,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Cacheable(cacheNames = "users-with-cards", key = "#id")
     @Transactional(readOnly = true)
-    public UserDto getUserWithCardsById(Long id){
-        if(id == null){
-            throw new  BusinessException("[getUserById] Id is null");
+    public UserDto getUserWithCardsById(Long id) {
+        if (id == null) {
+            throw new BusinessException("[getUserById] Id is null");
         }
 
         User user = userDao.findUserById(id)
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
         List<PaymentCard> paymentCards = paymentCardDao.findAllByUserId(id);
 
         List<PaymentCardDto> userCards = paymentCards.stream()
-                .map(paymentCardMapper :: toPaymentCardDto)
+                .map(paymentCardMapper::toPaymentCardDto)
                 .toList();
 
         userDto.setUserPaymentCards(userCards);
@@ -97,15 +97,15 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public Page<UserDto> getAllUsers(String name, String surname, Pageable pageable) {
 
-        if(pageable == null){
-            throw new  BusinessException("[getAllUsers] Pageable is null");
+        if (pageable == null) {
+            throw new BusinessException("[getAllUsers] Pageable is null");
         }
 
         Specification<User> userSpecification = UserSpecification.byNameAndSurname(name, surname);
 
         Page<User> userPage = userDao.findAll(userSpecification, pageable);
 
-        return userPage.map(userMapper :: toUserDto);
+        return userPage.map(userMapper::toUserDto);
     }
 
     @Override
@@ -113,28 +113,32 @@ public class UserServiceImpl implements UserService {
     @CachePut(cacheNames = "users", key = "#userDto.id")
     public UserDto updateUser(UserDto userDto) {
 
-      if(userDto == null){
-          throw new BusinessException("[updateUser] UserDto is null");
-      }
+        if (userDto == null) {
+            throw new BusinessException("[updateUser] UserDto is null");
+        }
 
-      Long id = userDto.getId();
+        Long id = userDto.getId();
 
-      User user = userDao.findUserById(id)
-              .orElseThrow(() -> new EntityNotFoundException("User", id));
+        User user = userDao.findUserById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User", id));
 
-      userMapper.updateUserFromDto(userDto, user);
+        if (!user.isActive()) {
+            throw new BusinessException("User with id[%s] is not active".formatted(id));
+        }
 
-      userDao.save(user);
+        userMapper.updateUserFromDto(userDto, user);
 
-      return userMapper.toUserDto(user);
+        userDao.save(user);
+
+        return userMapper.toUserDto(user);
     }
 
     @Override
     @Transactional
     @CacheEvict(cacheNames = "users", key = "#id")
     public boolean activateUserById(Long id) {
-        if(id == null){
-            throw new  BusinessException("[activateUserById] Id is null");
+        if (id == null) {
+            throw new BusinessException("[activateUserById] Id is null");
         }
 
         int success = userDao.activateUserById(id);
@@ -146,28 +150,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @CacheEvict(cacheNames = "users", key = "#id")
     public boolean deactivateUserById(Long id) {
-        if(id == null){
-            throw new  BusinessException("[deactivateUserById] Id is null");
+        if (id == null) {
+            throw new BusinessException("[deactivateUserById] Id is null");
         }
 
         int success = userDao.deactivateUserById(id);
 
         return success != 0;
-    }
-
-
-    @Override
-    @CacheEvict(cacheNames = "users", key = "#id")
-    public UserDto deleteUserById(Long id) {
-        if(id == null){
-            throw new  BusinessException("[deleteUserById] Id is null");
-        }
-
-        User user = userDao.findUserById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User", id));
-
-        userDao.delete(user);
-
-        return userMapper.toUserDto(user);
     }
 }

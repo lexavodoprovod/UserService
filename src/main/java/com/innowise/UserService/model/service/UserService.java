@@ -18,6 +18,4 @@ public interface UserService {
     boolean activateUserById(Long id);
 
     boolean deactivateUserById(Long id);
-
-    UserDto deleteUserById(Long id);
 }

@@ -73,10 +73,4 @@ public class UserController {
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/delete/{id}")
-    public ResponseEntity<UserDto> deleteUser(@PathVariable Long id){
-        UserDto user = userService.deleteUserById(id);
-        return ResponseEntity.ok(user);
-    }
-
 }

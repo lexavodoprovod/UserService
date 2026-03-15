@@ -49,6 +49,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         User user = userDao.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User", userId));
 
+        if(!user.isActive()){
+            throw new BusinessException("User with id[%s] is not active]".formatted(userId));
+        }
+
         int count = paymentCardDao.countPaymentCardByUserId(userId);
 
         if(count > MAX_COUNT_CARDS){
@@ -86,6 +90,9 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new BusinessException("[getPaymentCardsByUserId] Id is null");
         }
 
+        userDao.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User", id));
+
         List<PaymentCard> paymentCards = paymentCardDao.findAllByUserId(id);
 
         return paymentCards.stream()
@@ -116,10 +123,18 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new BusinessException("[updatePaymentCard] PaymentCardDto is null");
         }
 
-        Long id = paymentCardDto.getId();
+        Long cardId = paymentCardDto.getId();
+        Long userId = paymentCardDto.getUserId();
 
-        PaymentCard paymentCard = paymentCardDao.findPaymentCardById(id)
-                .orElseThrow(() -> new EntityNotFoundException("PaymentCard", id));
+        User user = userDao.findUserById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User", userId));
+
+        if(!user.isActive()){
+            throw new BusinessException("User with id[%s] is not active]".formatted(userId));
+        }
+
+        PaymentCard paymentCard = paymentCardDao.findPaymentCardById(cardId)
+                .orElseThrow(() -> new EntityNotFoundException("PaymentCard", cardId));
 
         paymentCardMapper.updatePaymentCardFromDto(paymentCardDto, paymentCard);
         paymentCardDao.updatePaymentCardById(paymentCard);

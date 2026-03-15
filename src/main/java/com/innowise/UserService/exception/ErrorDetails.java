@@ -1,11 +1,13 @@
 package com.innowise.UserService.exception;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 
 @Builder
+@Getter
 public class ErrorDetails {
 
     private final String message;
