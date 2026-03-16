@@ -41,12 +41,12 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         boolean isExist = paymentCardDao.existsByNumber(paymentCardDto.getNumber());
 
         if(isExist){
-           throw new BusinessException("PaymentCard with this number already exists");
+            throw new BusinessException("PaymentCard with this number already exists");
         }
 
         Long userId = paymentCardDto.getUserId();
 
-        User user = userDao.findById(userId)
+        User user = userDao.findUserById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User", userId));
 
         if(!user.isActive()){
@@ -62,9 +62,9 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         PaymentCard paymentCard = paymentCardMapper.toPaymentCard(paymentCardDto);
         paymentCard.setUser(user);
 
-        PaymentCard paymentCardSaved = paymentCardDao.save(paymentCard);
+        paymentCardDao.save(paymentCard);
 
-        return paymentCardMapper.toPaymentCardDto(paymentCardSaved);
+        return paymentCardMapper.toPaymentCardDto(paymentCard);
     }
 
 
@@ -73,7 +73,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     public PaymentCardDto getPaymentCardById(Long id) {
 
         if(id == null){
-            throw new BusinessException("[gitPaymentCardById] Id is null");
+            throw new BusinessException("[getPaymentCardById] Id is null");
         }
 
         PaymentCard paymentCard = paymentCardDao.findPaymentCardById(id)
@@ -90,7 +90,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new BusinessException("[getPaymentCardsByUserId] Id is null");
         }
 
-        userDao.findById(id)
+        userDao.findUserById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", id));
 
         List<PaymentCard> paymentCards = paymentCardDao.findAllByUserId(id);
@@ -106,7 +106,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     public Page<PaymentCardDto> getAllPaymentCards(String number, Pageable pageable) {
 
         if(pageable == null){
-            throw new BusinessException("[getAllPaymentCardsByUserId] Pageable or number is null");
+            throw new BusinessException("[getAllPaymentCards] Pageable or number is null");
         }
 
         Specification<PaymentCard> paymentCardSpecification = PaymentCardSpecification.byNumber(number);
@@ -130,7 +130,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
                 .orElseThrow(() -> new EntityNotFoundException("User", userId));
 
         if(!user.isActive()){
-            throw new BusinessException("User with id[%s] is not active]".formatted(userId));
+            throw new BusinessException("User with id[%s] is not active".formatted(userId));
         }
 
         PaymentCard paymentCard = paymentCardDao.findPaymentCardById(cardId)
@@ -149,6 +149,8 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new BusinessException("[activatePaymentCardById] Id is null");
         }
 
+        getPaymentCardById(id);
+
         int success = paymentCardDao.activatePaymentCardById(id);
 
         return success !=0;
@@ -160,6 +162,8 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         if (id == null){
             throw new BusinessException("[deactivatePaymentCardById] Id is null");
         }
+
+        getPaymentCardById(id);
 
         int success = paymentCardDao.deactivatePaymentCardById(id);
 

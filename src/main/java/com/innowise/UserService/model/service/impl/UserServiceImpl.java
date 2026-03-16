@@ -141,6 +141,10 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("[activateUserById] Id is null");
         }
 
+        userDao.findUserById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User", id));
+
+
         int success = userDao.activateUserById(id);
 
         return success != 0;
@@ -153,6 +157,9 @@ public class UserServiceImpl implements UserService {
         if (id == null) {
             throw new BusinessException("[deactivateUserById] Id is null");
         }
+
+        userDao.findUserById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User", id));
 
         int success = userDao.deactivateUserById(id);
 
