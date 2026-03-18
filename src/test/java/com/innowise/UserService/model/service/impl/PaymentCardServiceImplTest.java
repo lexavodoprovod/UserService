@@ -98,11 +98,12 @@ class PaymentCardServiceImplTest {
         @DisplayName("Should create payment card if userDto exist")
         void shouldCreatePaymentCardSuccessfully() {
             String number = paymentCard.getNumber();
-            Long userId = paymentCardDto.getId();
+            Long userId = paymentCardDto.getUserId();
             when(paymentCardDao.existsByNumber(number)).thenReturn(false);
             when(userDao.findUserById(userId)).thenReturn(Optional.of(user));
+            when(paymentCardDao.countActivePaymentCardByUserId(userId)).thenReturn(1);
             when(paymentCardMapper.toPaymentCard(paymentCardDto)).thenReturn(paymentCard);
-            when(paymentCardDao.countPaymentCardByUserId(userId)).thenReturn(1);
+            when(paymentCardDao.save(paymentCard)).thenReturn(paymentCard);
             when(paymentCardMapper.toPaymentCardDto(paymentCard)).thenReturn(paymentCardDto);
 
             PaymentCardDto result = paymentCardService.createPaymentCard(paymentCardDto);
@@ -111,7 +112,7 @@ class PaymentCardServiceImplTest {
             assertEquals(number, result.getNumber());
             verify(paymentCardDao, times(1)).existsByNumber(number);
             verify(userDao, times(1)).findUserById(userId);
-            verify(paymentCardDao, times(1)).countPaymentCardByUserId(userId);
+            verify(paymentCardDao, times(1)).countActivePaymentCardByUserId(userId);
             verify(paymentCardMapper, times(1)).toPaymentCard(paymentCardDto);
             verify(paymentCardDao, times(1)).save(paymentCard);
             verify(paymentCardMapper, times(1)).toPaymentCardDto(paymentCard);
@@ -119,15 +120,15 @@ class PaymentCardServiceImplTest {
         }
 
         @Test
-        @DisplayName("Should throw BusinessException when card number already exists")
+        @DisplayName("Should throw BusinessException when card number already exists and card is active")
         void createPaymentCardShouldThrowExceptionWhenCardNumberExists() {
             when(paymentCardDao.existsByNumber(anyString())).thenReturn(true);
+            when(paymentCardDao.findPaymentCardByNumber(anyString())).thenReturn(Optional.of(paymentCard));
 
             BusinessException businessException = assertThrows(
                     BusinessException.class,
                     () -> paymentCardService.createPaymentCard(paymentCardDto));
 
-            assertTrue(businessException.getMessage().contains("already exists"));
             assertEquals("PaymentCard with this number already exists", businessException.getMessage());
             verifyNoMoreInteractions(paymentCardDao);
         }
@@ -179,7 +180,7 @@ class PaymentCardServiceImplTest {
 
             when(paymentCardDao.existsByNumber(number)).thenReturn(false);
             when(userDao.findUserById(userId)).thenReturn(Optional.of(user));
-            when(paymentCardDao.countPaymentCardByUserId(userId)).thenReturn(6);
+            when(paymentCardDao.countActivePaymentCardByUserId(userId)).thenReturn(6);
 
             BusinessException businessException = assertThrows(
                     BusinessException.class,
@@ -187,10 +188,10 @@ class PaymentCardServiceImplTest {
 
 
             assertNotNull(businessException);
-            assertEquals("User cannot have more than 5 paymentCards", businessException.getMessage());
+            assertEquals("User cannot have more than 5 active paymentCards", businessException.getMessage());
             verify(userDao, times(1)).findUserById(userId);
             verify(paymentCardDao, times(1)).existsByNumber(number);
-            verify(paymentCardDao, times(1)).countPaymentCardByUserId(userId);
+            verify(paymentCardDao, times(1)).countActivePaymentCardByUserId(userId);
             verifyNoMoreInteractions(paymentCardDao);
             verifyNoInteractions(paymentCardMapper);
         }
@@ -437,23 +438,62 @@ class PaymentCardServiceImplTest {
             verifyNoInteractions(paymentCardMapper);
 
         }
+
+        @Test
+        @DisplayName("Should throw BusinessException when payment card is not active")
+        void shouldThrowBusinessExceptionWhenPaymentCardIsNotActive() {
+            Long id = 1L;
+            paymentCard.setActive(false);
+            when(userDao.findUserById(id)).thenReturn(Optional.of(user));
+            when(paymentCardDao.findPaymentCardById(id)).thenReturn(Optional.of(paymentCard));
+
+
+            BusinessException businessException = assertThrows(
+                    BusinessException.class,
+                    () -> paymentCardService.updatePaymentCard(paymentCardDto));
+
+            assertNotNull(businessException);
+            assertEquals("PaymentCard with id[%s] is not active".formatted(id), businessException.getMessage());
+            verify(userDao, times(1)).findUserById(id);
+            verify(paymentCardDao, times(1)).findPaymentCardById(id);
+            verifyNoMoreInteractions(paymentCardDao);
+            verifyNoInteractions(paymentCardMapper);
+        }
     }
 
     @Nested
     @DisplayName("Activate User Tests")
-    class ActivateUserTests {
+    class ActivatePaymentCardTests {
         @Test
         @DisplayName("Should activate payment card successfully")
         void shouldActivatePaymentCardSuccessfully() {
             Long id = 1L;
             when(paymentCardDao.findPaymentCardById(id)).thenReturn(Optional.of(paymentCard));
+            when(paymentCardDao.countActivePaymentCardByUserId(id)).thenReturn(4);
             when(paymentCardDao.activatePaymentCardById(id)).thenReturn(1);
 
             boolean success = paymentCardService.activatePaymentCardById(id);
 
             assertTrue(success);
             verify(paymentCardDao, times(1)).findPaymentCardById(id);
+            verify(paymentCardDao, times(1)).countActivePaymentCardByUserId(id);
             verify(paymentCardDao, times(1)).activatePaymentCardById(id);
+        }
+
+        @Test
+        @DisplayName("Should throw BusinessException when try activate 6 payment card")
+        void shouldThrowBusinessExceptionWhenTryAdd6PaymentCard() {
+            Long id = 1L;
+            when(paymentCardDao.findPaymentCardById(id)).thenReturn(Optional.of(paymentCard));
+            when(paymentCardDao.countActivePaymentCardByUserId(id)).thenReturn(5);
+
+            BusinessException businessException = assertThrows(
+                    BusinessException.class,
+                    () -> paymentCardService.activatePaymentCardById(id));
+
+            assertNotNull(businessException);
+            assertEquals("User cannot have more than 5 active paymentCards", businessException.getMessage());
+            verifyNoMoreInteractions(paymentCardDao);
         }
 
         @Test

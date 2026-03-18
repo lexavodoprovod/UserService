@@ -69,31 +69,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(cacheNames = "users-with-cards", key = "#id")
-    @Transactional(readOnly = true)
-    public UserDto getUserWithCardsById(Long id) {
-        if (id == null) {
-            throw new BusinessException("[getUserById] Id is null");
-        }
-
-        User user = userDao.findUserById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User", id));
-
-        UserDto userDto = userMapper.toUserDto(user);
-
-        List<PaymentCard> paymentCards = paymentCardDao.findAllByUserId(id);
-
-        List<PaymentCardDto> userCards = paymentCards.stream()
-                .map(paymentCardMapper::toPaymentCardDto)
-                .toList();
-
-        userDto.setPaymentCards(userCards);
-
-        return userDto;
-    }
-
-
-    @Override
     @Transactional(readOnly = true)
     public Page<UserDto> getAllUsers(String name, String surname, Pageable pageable) {
 

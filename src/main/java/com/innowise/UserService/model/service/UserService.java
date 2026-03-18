@@ -9,8 +9,6 @@ public interface UserService {
 
     UserDto getUserById(Long id);
 
-    UserDto getUserWithCardsById(Long id);
-
     Page<UserDto> getAllUsers(String name, String surname, Pageable pageable);
 
     UserDto updateUser(UserDto userDto);

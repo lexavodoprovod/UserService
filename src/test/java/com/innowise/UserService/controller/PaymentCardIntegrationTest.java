@@ -121,6 +121,55 @@ public class PaymentCardIntegrationTest {
         }
 
         @Test
+        @DisplayName("Should return 409 when try to add 6 active card")
+        void shouldReturn409WhenTryToAdd6ActiveCard() throws Exception {
+            User user = User.builder()
+                    .name("Roma")
+                    .surname("Dovidenko")
+                    .email("roma@example.com")
+                    .birthDate(LocalDate.of(2005, 9, 25))
+                    .active(true)
+                    .build();
+
+            User savedUser = userDao.save(user);
+
+            for(int i = 0; i < 5; i ++){
+                PaymentCard card = PaymentCard.builder()
+                        .number("111122223333444" + i)
+                        .holder("ROMA DOVIDENKO")
+                        .expirationDate(LocalDate.of(2030, 1, 1))
+                        .user(user)
+                        .build();
+
+                paymentCardDao.save(card);
+            }
+
+            PaymentCard notActiveCard = PaymentCard.builder()
+                    .number("1111222233334449")
+                    .holder("ROMA DOVIDENKO")
+                    .expirationDate(LocalDate.of(2030, 1, 1))
+                    .user(user)
+                    .active(false)
+                    .build();
+
+            paymentCardDao.save(notActiveCard);
+
+            PaymentCardDto cardDto = PaymentCardDto.builder()
+                    .number("1100000033334444")
+                    .holder("ROMA DOVIDENKO")
+                    .expirationDate(LocalDate.of(2030, 12, 31))
+                    .userId(savedUser.getId())
+                    .build();
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/payment-cards")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(cardDto))
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isConflict());
+        }
+
+
+        @Test
         @DisplayName("Should return 400 when card number is too short")
         void shouldReturn400WhenCardNumberIsInvalid() throws Exception {
             PaymentCardDto invalidCard = PaymentCardDto.builder()
@@ -415,6 +464,45 @@ public class PaymentCardIntegrationTest {
     @Nested
     @DisplayName("Activate PaymentCard Integration Tests")
     class ActivatePaymentCardRequest {
+
+        @Test
+        @DisplayName("Should throw exception when try activate 6 payment card")
+        void shouldThrowExceptionWhenTryActivate6Card() throws Exception {
+            User user = User.builder()
+                    .name("Roma")
+                    .surname("Dovidenko")
+                    .email("roma.activate@example.com")
+                    .birthDate(LocalDate.of(2005, 9, 25))
+                    .active(true)
+                    .build();
+            User savedUser = userDao.save(user);
+
+           for(int i = 0; i < 5; i++) {
+               PaymentCard card = PaymentCard.builder()
+                       .number("111122223333444" + i)
+                       .holder("ROMA DOVIDENKO")
+                       .expirationDate(LocalDate.of(2030, 1, 1))
+                       .user(savedUser)
+                       .active(true)
+                       .build();
+               paymentCardDao.save(card);
+           }
+            PaymentCard card = PaymentCard.builder()
+                    .number("111122223333365")
+                    .holder("ROMA DOVIDENKO")
+                    .expirationDate(LocalDate.of(2030, 1, 1))
+                    .user(savedUser)
+                    .active(false)
+                    .build();
+
+            PaymentCard savedCard = paymentCardDao.save(card);
+            Long cardId = savedCard.getId();
+
+
+            mockMvc.perform(MockMvcRequestBuilders.patch("/payment-cards/" + cardId + "/activate")
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isConflict());
+        }
 
         @Test
         @DisplayName("Should activate payment card successfully")

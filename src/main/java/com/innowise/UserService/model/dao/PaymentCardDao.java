@@ -23,6 +23,8 @@ public interface PaymentCardDao extends JpaRepository<PaymentCard, Long>, JpaSpe
 
     boolean existsByNumber(String number);
 
+    Optional<PaymentCard> findPaymentCardByNumber(String number);
+
     @Modifying
     @Query(value = UPDATE_PAYMENT_CARD_BY_ID_NATIVE, nativeQuery = true)
     void updatePaymentCardById(@Param("paymentCard") PaymentCard paymentCard);
@@ -41,4 +43,7 @@ public interface PaymentCardDao extends JpaRepository<PaymentCard, Long>, JpaSpe
 
     @Query(value = COUNT_PAYMENT_CARD_BY_USER_ID_JPQL)
     int countPaymentCardByUserId(@Param("userId")Long userId);
+
+    @Query(value = COUNT_ACTIVE_PAYMENT_CARD_BY_USER_ID_JPQL)
+    int countActivePaymentCardByUserId(@Param("userId")Long userId);
 }

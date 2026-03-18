@@ -34,5 +34,11 @@ public final class PaymentCardQuery {
             WHERE p.user.id = :userId
             """;
 
+    public static final String COUNT_ACTIVE_PAYMENT_CARD_BY_USER_ID_JPQL = """
+            SELECT COUNT(p)
+            FROM PaymentCard p
+            WHERE p.user.id = :userId AND p.active = true
+            """;
+
     private PaymentCardQuery() {}
 }

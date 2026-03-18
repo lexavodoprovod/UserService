@@ -196,67 +196,6 @@ class UserServiceImplTest {
     }
 
     @Nested
-    @DisplayName("Get User With Cards By Id Tests")
-    class GetUserWithCardsByIdTests{
-
-        @Test
-        @DisplayName("Should return user with cards if user exist")
-        void shouldReturnUserSuccessfully() {
-            Long id = 1L;
-            when(userDao.findUserById(id)).thenReturn(Optional.of(user));
-            when(userMapper.toUserDto(user)).thenReturn(userDto);
-            when(paymentCardDao.findAllByUserId(id)).thenReturn(List.of(paymentCard));
-            when(paymentCardMapper.toPaymentCardDto(paymentCard)).thenReturn(paymentCardDto);
-
-            UserDto result = userService.getUserWithCardsById(id);
-
-            assertNotNull(result);
-            assertEquals(id, result.getId());
-            assertEquals(userDto.getPaymentCards(), List.of(paymentCardDto));
-            verify(userDao, times(1)).findUserById(id);
-            verify(paymentCardDao, times(1)).findAllByUserId(id);
-            verify(paymentCardMapper, times(1)).toPaymentCardDto(paymentCard);
-        }
-
-        @Test
-        @DisplayName("Should throw BusinessException when id is null")
-        void shouldThrowBusinessExceptionWhenIdIsNull() {
-            Long id = null;
-
-            BusinessException businessException =  assertThrows(
-                    BusinessException.class,
-                    () -> userService.getUserWithCardsById(id));
-
-            assertNotNull(businessException);
-            assertEquals("[getUserById] Id is null",  businessException.getMessage());
-            verifyNoInteractions(userDao);
-            verifyNoInteractions(userMapper);
-            verifyNoInteractions(paymentCardDao);
-            verifyNoInteractions(paymentCardMapper);
-        }
-
-        @Test
-        @DisplayName("Should throw EntityNotFoundException if user is not exist")
-        void  shouldThrowEntityNotFoundExceptionIfUserIsNotExist() {
-            Long id = 1L;
-            when(userDao.findUserById(id)).thenReturn(Optional.empty());
-
-            EntityNotFoundException entityNotFoundException = assertThrows(
-                    EntityNotFoundException.class,
-                    () -> userService.getUserWithCardsById(id)
-            );
-
-            assertNotNull(entityNotFoundException);
-            assertEquals("User with id [%s] not found".formatted(id),  entityNotFoundException.getMessage());
-            verify(userDao, times(1)).findUserById(id);
-            verifyNoInteractions(userMapper);
-            verifyNoInteractions(paymentCardDao);
-            verifyNoInteractions(paymentCardMapper);
-
-        }
-    }
-
-    @Nested
     @DisplayName("Get All Users Tests")
     class GetAllUsersTests{
 

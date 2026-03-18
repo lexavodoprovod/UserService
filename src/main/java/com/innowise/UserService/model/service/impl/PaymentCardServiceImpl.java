@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PaymentCardServiceImpl implements PaymentCardService {
 
-    private final int MAX_COUNT_CARDS = 5;
+    private final int MAX_COUNT_ACTIVE_CARDS = 5;
 
     private final PaymentCardDao paymentCardDao;
     private final UserDao userDao;
@@ -38,10 +38,17 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new BusinessException("[createPaymentCard] PaymentCardDto is null");
         }
 
-        boolean isExist = paymentCardDao.existsByNumber(paymentCardDto.getNumber());
+        String cardNumber = paymentCardDto.getNumber();
+
+        boolean isExist = paymentCardDao.existsByNumber(cardNumber);
 
         if(isExist){
-            throw new BusinessException("PaymentCard with this number already exists");
+            PaymentCard cardByNumber = paymentCardDao.findPaymentCardByNumber(cardNumber)
+                    .orElseThrow(() -> new EntityNotFoundException("Error find card with this number"));
+
+            if(cardByNumber.isActive()){
+                throw new BusinessException("PaymentCard with this number already exists");
+            }
         }
 
         Long userId = paymentCardDto.getUserId();
@@ -53,18 +60,18 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new BusinessException("User with id[%s] is not active]".formatted(userId));
         }
 
-        int count = paymentCardDao.countPaymentCardByUserId(userId);
+        int countOfActiveCards = paymentCardDao.countActivePaymentCardByUserId(userId);
 
-        if(count > MAX_COUNT_CARDS){
-            throw new BusinessException("User cannot have more than " + MAX_COUNT_CARDS + " paymentCards");
+        if(countOfActiveCards >= MAX_COUNT_ACTIVE_CARDS){
+            throw new BusinessException("User cannot have more than " + MAX_COUNT_ACTIVE_CARDS + " active paymentCards");
         }
 
         PaymentCard paymentCard = paymentCardMapper.toPaymentCard(paymentCardDto);
         paymentCard.setUser(user);
 
-        paymentCardDao.save(paymentCard);
+        PaymentCard savedCard = paymentCardDao.save(paymentCard);
 
-        return paymentCardMapper.toPaymentCardDto(paymentCard);
+        return paymentCardMapper.toPaymentCardDto(savedCard);
     }
 
 
@@ -138,6 +145,10 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         PaymentCard paymentCard = paymentCardDao.findPaymentCardById(cardId)
                 .orElseThrow(() -> new EntityNotFoundException("PaymentCard", cardId));
 
+        if(!paymentCard.isActive()){
+            throw new BusinessException("PaymentCard with id[%s] is not active".formatted(userId));
+        }
+
         paymentCardMapper.updatePaymentCardFromDto(paymentCardDto, paymentCard);
         paymentCardDao.updatePaymentCardById(paymentCard);
 
@@ -151,7 +162,20 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new BusinessException("[activatePaymentCardById] Id is null");
         }
 
-        getPaymentCardById(id);
+        PaymentCard paymentCard = paymentCardDao.findPaymentCardById(id)
+                .orElseThrow(() -> new EntityNotFoundException("PaymentCard", id));
+
+        User user = paymentCard.getUser();
+
+        if(!user.isActive()){
+            throw new BusinessException("User with id[%s] is not active".formatted(user.getId()));
+        }
+
+        int countActiveCards = paymentCardDao.countActivePaymentCardByUserId(user.getId());
+
+        if(countActiveCards >= MAX_COUNT_ACTIVE_CARDS){
+            throw new BusinessException("User cannot have more than " + MAX_COUNT_ACTIVE_CARDS + " active paymentCards");
+        }
 
         int success = paymentCardDao.activatePaymentCardById(id);
 
@@ -165,7 +189,8 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new BusinessException("[deactivatePaymentCardById] Id is null");
         }
 
-        getPaymentCardById(id);
+        PaymentCard paymentCard = paymentCardDao.findPaymentCardById(id)
+                .orElseThrow(() -> new EntityNotFoundException("PaymentCard", id));
 
         int success = paymentCardDao.deactivatePaymentCardById(id);
 

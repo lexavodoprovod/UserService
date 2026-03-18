@@ -33,12 +33,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/user-with-cards/{id}")
-    public ResponseEntity<UserDto> getUserWithCards(@PathVariable Long id){
-        UserDto user = userService.getUserWithCardsById(id);
-        return ResponseEntity.ok(user);
-    }
-
     @GetMapping
     public ResponseEntity<Page<UserDto>> getAllUsers(
             @RequestParam(required = false) String name,
