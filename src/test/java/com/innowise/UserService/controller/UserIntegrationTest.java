@@ -289,7 +289,7 @@ public class UserIntegrationTest {
             mockMvc.perform(MockMvcRequestBuilders
                             .get("/users/user-with-cards/" + savedUser.getId()))
                     .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.userPaymentCards").isEmpty());
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.paymentCards").isEmpty());
         }
 
         @Test
@@ -325,7 +325,7 @@ public class UserIntegrationTest {
 
             mockMvc.perform(MockMvcRequestBuilders.get("/users/user-with-cards/" + savedUser.getId()))
                     .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.userPaymentCards.length()").value(2));
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.paymentCards.length()").value(2));
         }
 
     }
