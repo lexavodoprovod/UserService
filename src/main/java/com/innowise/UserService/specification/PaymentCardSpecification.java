@@ -1,6 +1,7 @@
 package com.innowise.UserService.specification;
 
 import com.innowise.UserService.model.entity.PaymentCard;
+import com.innowise.UserService.model.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 
 public class PaymentCardSpecification {
@@ -14,5 +15,9 @@ public class PaymentCardSpecification {
             }
             return criteriaBuilder.conjunction();
         };
+    }
+
+    public static Specification<PaymentCard> isActive() {
+        return (root, query, cb) -> cb.equal(root.get("active"), true);
     }
 }

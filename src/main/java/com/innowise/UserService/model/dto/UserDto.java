@@ -35,5 +35,5 @@ public class UserDto implements Serializable {
 
     private boolean active;
 
-    private List<PaymentCardDto> userPaymentCards;
+    private List<PaymentCardDto> paymentCards;
 }

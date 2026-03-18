@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
                 .map(paymentCardMapper::toPaymentCardDto)
                 .toList();
 
-        userDto.setUserPaymentCards(userCards);
+        userDto.setPaymentCards(userCards);
 
         return userDto;
     }
@@ -101,7 +101,9 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("[getAllUsers] Pageable is null");
         }
 
-        Specification<User> userSpecification = UserSpecification.byNameAndSurname(name, surname);
+        Specification<User> userSpecification = Specification.
+                where(UserSpecification.byNameAndSurname(name, surname)
+                .and(UserSpecification.isActive()));
 
         Page<User> userPage = userDao.findAll(userSpecification, pageable);
 
@@ -144,10 +146,9 @@ public class UserServiceImpl implements UserService {
         userDao.findUserById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", id));
 
+        int result = userDao.activateUserById(id);
 
-        int success = userDao.activateUserById(id);
-
-        return success != 0;
+        return result != 0;
     }
 
     @Override
@@ -161,8 +162,18 @@ public class UserServiceImpl implements UserService {
         userDao.findUserById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", id));
 
-        int success = userDao.deactivateUserById(id);
+        int userResult = userDao.deactivateUserById(id);
 
-        return success != 0;
+        if(userResult != 0){
+            int cardResult = paymentCardDao.deactivateAllCardsByUserId(id);
+
+            if(cardResult != 0){
+                return true;
+            }else{
+                throw new BusinessException("Cannot deactivate payment cards of user with id[%s]".formatted(id));
+            }
+        }else{
+            throw new BusinessException("Cannot deactivate user with id[%s]".formatted(id));
+        }
     }
 }

@@ -351,7 +351,7 @@ public class UserIntegrationTest {
                     .surname("Ivanov")
                     .email("ivan@example.com")
                     .birthDate(LocalDate.of(2005, 9, 25))
-                    .active(true)
+                    .active(false)
                     .build();
 
             userDao.save(roma);
@@ -361,8 +361,8 @@ public class UserIntegrationTest {
             mockMvc.perform(MockMvcRequestBuilders.get("/users")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()").value(2))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(2));
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()").value(1))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value(1));
         }
 
         @Test
@@ -497,42 +497,82 @@ public class UserIntegrationTest {
             mockMvc.perform(MockMvcRequestBuilders.patch("/users/" + nonExistentId + "/activate"))
                     .andExpect(MockMvcResultMatchers.status().isNotFound());
         }
+    }
 
-        @Nested
-        @DisplayName("Deactivate User Integration Tests")
-        class DeactivateUserRequest {
+    @Nested
+    @DisplayName("Deactivate User Integration Tests")
+    class DeactivateUserRequest {
 
-            @Test
-            @DisplayName("Should deactivate user successfully")
-            void shouldActivateUserSuccessfully() throws Exception {
-                User user = User.builder()
-                        .name("Ivan")
-                        .surname("Ivanov")
-                        .email("ivan@test.com")
-                        .birthDate(LocalDate.of(2000, 1, 1))
-                        .active(true)
-                        .build();
-                User savedUser = userDao.save(user);
-                Long userId = savedUser.getId();
+        @Test
+        @DisplayName("Should deactivate user successfully")
+        void shouldDeactivateUserSuccessfully() throws Exception {
+            User user = User.builder()
+                    .name("Ivan")
+                    .surname("Ivanov")
+                    .email("ivan@test.com")
+                    .birthDate(LocalDate.of(2000, 1, 1))
+                    .active(true)
+                    .build();
+            PaymentCard paymentCard1 = PaymentCard.builder()
+                    .user(user)
+                    .number("9112999999999999")
+                    .holder("ROMA DOVIDENKO")
+                    .expirationDate(LocalDate.of(2028, 3, 31))
+                    .active(true)
+                    .build();
 
-                mockMvc.perform(MockMvcRequestBuilders.patch("/users/" + userId + "/deactivate")
-                                .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(MockMvcResultMatchers.status().isNoContent());
+            PaymentCard paymentCard2 = PaymentCard.builder()
+                    .user(user)
+                    .number("9112991717999999")
+                    .holder("ROMA DOVIDENKO")
+                    .expirationDate(LocalDate.of(2028, 3, 31))
+                    .active(true)
+                    .build();
 
-                User activatedUser = userDao.findById(userId).orElseThrow();
-                assertFalse(activatedUser.isActive(), "User should be active in the database");
-            }
+            PaymentCard paymentCard3 = PaymentCard.builder()
+                    .user(user)
+                    .number("9046799999999999")
+                    .holder("ROMA DOVIDENKO")
+                    .expirationDate(LocalDate.of(2028, 3, 31))
+                    .active(true)
+                    .build();
 
-            @Test
-            @DisplayName("Should return 404 when activating non-existent user")
-            void shouldReturn404WhenUserNotFound() throws Exception {
-                Long nonExistentId = 999L;
+            User savedUser = userDao.save(user);
+            Long userId = savedUser.getId();
 
-                mockMvc.perform(MockMvcRequestBuilders.patch("/users/" + nonExistentId + "/deactivate"))
-                        .andExpect(MockMvcResultMatchers.status().isNotFound());
-            }
+            PaymentCard savedPaymentCard1 =  paymentCardDao.save(paymentCard1);
+            Long card1Id = savedPaymentCard1.getId();
+
+            PaymentCard savedPaymentCard2 = paymentCardDao.save(paymentCard2);
+            Long card2Id = savedPaymentCard2.getId();
+
+            PaymentCard savedPaymentCard3 =  paymentCardDao.save(paymentCard3);
+            Long card3Id = savedPaymentCard3.getId();
+
+
+            mockMvc.perform(MockMvcRequestBuilders.patch("/users/" + userId + "/deactivate")
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+            User deactivatedUser = userDao.findById(userId).orElseThrow();
+            PaymentCard deactivatedCard1 = paymentCardDao.findPaymentCardById(card1Id).orElseThrow();
+            PaymentCard deactivatedCard2 = paymentCardDao.findPaymentCardById(card2Id).orElseThrow();
+            PaymentCard deactivatedCard3 = paymentCardDao.findPaymentCardById(card3Id).orElseThrow();
+
+            assertFalse(deactivatedUser.isActive(), "User should be deactivated in the database");
+            assertFalse(deactivatedCard1.isActive(), "PaymentCard1 should be deactivated in the database");
+            assertFalse(deactivatedCard2.isActive(), "PaymentCard2 should be deactivated in the database");
+            assertFalse(deactivatedCard3.isActive(), "PaymentCard3 should be deactivated in the database");
         }
 
+        @Test
+        @DisplayName("Should return 404 when activating non-existent user")
+        void shouldReturn404WhenUserNotFound() throws Exception {
+            Long nonExistentId = 999L;
+
+            mockMvc.perform(MockMvcRequestBuilders.patch("/users/" + nonExistentId + "/deactivate"))
+                    .andExpect(MockMvcResultMatchers.status().isNotFound());
+        }
     }
 
 

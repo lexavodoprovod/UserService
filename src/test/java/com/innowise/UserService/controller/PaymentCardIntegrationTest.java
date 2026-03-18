@@ -259,10 +259,10 @@ public class PaymentCardIntegrationTest {
     }
 
     @Nested
-    @DisplayName("Get All Payment Cards Test")
+    @DisplayName("Get All Active Payment Cards Test")
     class GetAllPaymentCardsTest {
         @Test
-        @DisplayName("Should return page of payment cards")
+        @DisplayName("Should return page of active payment cards")
         void shouldReturnPageOfCards() throws Exception {
             User user = User.builder()
                     .name("Roma")
@@ -281,6 +281,16 @@ public class PaymentCardIntegrationTest {
                         .user(savedUser)
                         .build());
             }
+
+            PaymentCard notActiveCard = PaymentCard.builder()
+                    .number("1111222233334448")
+                    .holder("ROMA DOVIDENKO")
+                    .expirationDate(LocalDate.of(2030, 1, 1))
+                    .user(savedUser)
+                    .active(false)
+                    .build();
+
+            paymentCardDao.save(notActiveCard);
 
             mockMvc.perform(MockMvcRequestBuilders.get("/payment-cards")
                             .param("page", "0")

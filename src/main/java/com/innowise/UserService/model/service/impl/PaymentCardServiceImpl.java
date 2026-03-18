@@ -109,7 +109,9 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new BusinessException("[getAllPaymentCards] Pageable or number is null");
         }
 
-        Specification<PaymentCard> paymentCardSpecification = PaymentCardSpecification.byNumber(number);
+        Specification<PaymentCard> paymentCardSpecification = Specification
+                .where(PaymentCardSpecification.byNumber(number))
+                .and(PaymentCardSpecification.isActive());
 
         Page<PaymentCard> paymentCardPage = paymentCardDao.findAll(paymentCardSpecification, pageable);
 

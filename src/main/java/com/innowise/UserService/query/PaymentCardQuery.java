@@ -22,6 +22,12 @@ public final class PaymentCardQuery {
              WHERE p.id = :id
             """;
 
+    public static final String DEACTIVATE_PAYMENT_CARDS_BY_USER_ID_JPQL = """
+            UPDATE PaymentCard p
+            SET p.active = false
+            WHERE p.user.id = :userId
+            """;
+
     public static final String COUNT_PAYMENT_CARD_BY_USER_ID_JPQL = """
             SELECT COUNT(p)
             FROM PaymentCard p

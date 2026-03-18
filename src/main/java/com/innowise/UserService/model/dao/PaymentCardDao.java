@@ -35,6 +35,10 @@ public interface PaymentCardDao extends JpaRepository<PaymentCard, Long>, JpaSpe
     @Query(value = DEACTIVATE_PAYMENT_CARD_BY_ID_JPQL)
     int deactivatePaymentCardById(@Param("id") Long id);
 
+    @Modifying
+    @Query(value = DEACTIVATE_PAYMENT_CARDS_BY_USER_ID_JPQL)
+    int deactivateAllCardsByUserId(@Param("userId") Long userId);
+
     @Query(value = COUNT_PAYMENT_CARD_BY_USER_ID_JPQL)
     int countPaymentCardByUserId(@Param("userId")Long userId);
 }

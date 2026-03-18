@@ -36,4 +36,8 @@ public class UserSpecification {
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
+
+    public static Specification<User> isActive() {
+        return (root, query, cb) -> cb.equal(root.get("active"), true);
+    }
 }
