@@ -17,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +39,9 @@ class PaymentCardServiceImplTest {
 
     @Mock
     private UserDao userDao;
+
+    @Mock
+    private CacheManager cacheManager;
 
     @Mock
     private PaymentCardMapper paymentCardMapper;
@@ -448,6 +453,7 @@ class PaymentCardServiceImplTest {
             when(paymentCardDao.findPaymentCardById(id)).thenReturn(Optional.of(paymentCard));
             when(paymentCardDao.countActivePaymentCardByUserId(id)).thenReturn(4);
             when(paymentCardDao.activatePaymentCardById(id)).thenReturn(1);
+            when(cacheManager.getCache(anyString())).thenReturn(any(Cache.class));
 
             boolean success = paymentCardService.activatePaymentCardById(id);
 
@@ -510,6 +516,7 @@ class PaymentCardServiceImplTest {
             Long id = 1L;
             when(paymentCardDao.findPaymentCardById(id)).thenReturn(Optional.of(paymentCard));
             when(paymentCardDao.deactivatePaymentCardById(id)).thenReturn(1);
+            when(cacheManager.getCache(anyString())).thenReturn(any(Cache.class));
 
             boolean success = paymentCardService.deactivatePaymentCardById(id);
 

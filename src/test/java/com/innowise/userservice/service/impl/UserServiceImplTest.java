@@ -8,7 +8,6 @@ import com.innowise.userservice.repository.PaymentCardDao;
 import com.innowise.userservice.repository.UserDao;
 import com.innowise.userservice.dto.UserDto;
 import com.innowise.userservice.entity.User;
-import com.innowise.userservice.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -221,6 +220,7 @@ class UserServiceImplTest {
         void updateUserShouldUpdateUserDto() {
             Long id = 1L;
             when(userDao.findUserById(id)).thenReturn(Optional.of(user));
+            when(userDao.save(any(User.class))).thenReturn(user);
             when(userMapper.toUserDto(user)).thenReturn(userDto);
 
             UserDto result = userService.updateUser(userDto);

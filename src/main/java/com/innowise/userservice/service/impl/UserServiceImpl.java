@@ -119,7 +119,11 @@ public class UserServiceImpl implements UserService {
 
         int result = userDao.activateUserById(id);
 
-        return result != 0;
+        if(result == 0){
+            throw new UserActivateException(id);
+        }
+
+        return true;
     }
 
     @Override
@@ -135,16 +139,17 @@ public class UserServiceImpl implements UserService {
 
         int userResult = userDao.deactivateUserById(id);
 
-        if(userResult != 0){
-            int cardResult = paymentCardDao.deactivateAllCardsByUserId(id);
 
-            if(cardResult != 0){
-                return true;
-            }else{
-                throw new CardDeactivateException(id);
-            }
-        }else{
+        if(userResult == 0){
             throw new UserDeactivateException(id);
         }
+
+        int cardResult = paymentCardDao.deactivateAllCardsByUserId(id);
+
+        if(cardResult == 0){
+            throw new CardDeactivateException();
+        }
+
+        return true;
     }
 }

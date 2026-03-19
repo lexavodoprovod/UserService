@@ -12,9 +12,14 @@ import com.innowise.userservice.entity.User;
 import com.innowise.userservice.service.PaymentCardService;
 import com.innowise.userservice.specification.PaymentCardSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisProperties;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +34,11 @@ public class PaymentCardServiceImpl implements PaymentCardService {
     private final PaymentCardDao paymentCardDao;
     private final UserDao userDao;
     private final PaymentCardMapper paymentCardMapper;
+    private final CacheManager cacheManager;
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "users", key = "#paymentCardDto.userId")
     public PaymentCardDto createPaymentCard(PaymentCardDto paymentCardDto) {
 
         if(paymentCardDto == null){
@@ -127,6 +134,7 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames = "users", key = "#paymentCardDto.userId")
     public PaymentCardDto updatePaymentCard(PaymentCardDto paymentCardDto) {
         if(paymentCardDto == null){
             throw new CardNullParameterException();
@@ -178,9 +186,19 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new MaxCountCardsException(MAX_COUNT_ACTIVE_CARDS);
         }
 
+
         int success = paymentCardDao.activatePaymentCardById(id);
 
-        return success !=0;
+        if(success == 0){
+            throw new CardActivateException(id);
+        }
+
+        Cache usersCache = cacheManager.getCache("users");
+        if(usersCache != null){
+            usersCache.evict(userId);
+        }
+
+        return true;
     }
 
     @Override
@@ -190,11 +208,22 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new CardNullParameterException();
         }
 
-        paymentCardDao.findPaymentCardById(id)
+        PaymentCard paymentCard = paymentCardDao.findPaymentCardById(id)
                 .orElseThrow(() -> new CardNotFoundException(id));
+
+        Long userId = paymentCard.getUser().getId();
 
         int success = paymentCardDao.deactivatePaymentCardById(id);
 
-        return success !=0;
+        if(success == 0){
+            throw new CardDeactivateException(id);
+        }
+
+        Cache usersCache = cacheManager.getCache("users");
+        if(usersCache != null){
+            usersCache.evict(userId);
+        }
+
+        return true;
     }
 }
