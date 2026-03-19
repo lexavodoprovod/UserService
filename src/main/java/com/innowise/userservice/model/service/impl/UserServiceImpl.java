@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
 
         if (userDto == null) {
-            throw new UserNullParametеrException();
+            throw new UserNullParameterException();
         }
 
         String email = userDto.getEmail();
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
     @Cacheable(cacheNames = "users", key = "#id")
     public UserDto getUserById(Long id) {
         if (id == null) {
-            throw new UserNullParametеrException();
+            throw new UserNullParameterException();
         }
 
         User user = userDao.findUserById(id)
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     public Page<UserDto> getAllUsers(String name, String surname, Pageable pageable) {
 
         if (pageable == null) {
-            throw new UserNullParametеrException();
+            throw new UserNullParameterException();
         }
 
         Specification<User> userSpecification = Specification.
@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto) {
 
         if (userDto == null) {
-            throw new UserNullParametеrException();
+            throw new UserNullParameterException();
         }
 
         Long id = userDto.getId();
@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(cacheNames = "users", key = "#id")
     public boolean activateUserById(Long id) {
         if (id == null) {
-            throw new UserNullParametеrException();
+            throw new UserNullParameterException();
         }
 
         userDao.findUserById(id)
@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
     @CacheEvict(cacheNames = "users", key = "#id")
     public boolean deactivateUserById(Long id) {
         if (id == null) {
-            throw new UserNullParametеrException();
+            throw new UserNullParameterException();
         }
 
         userDao.findUserById(id)

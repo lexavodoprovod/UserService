@@ -334,34 +334,6 @@ class UserServiceImplTest {
         @Test
         @DisplayName("Should deactivate user successfully")
         void shouldDeactivateUserSuccessfully(){
-
-            PaymentCard paymentCard1 = PaymentCard.builder()
-                    .id(1L)
-                    .user(user)
-                    .number("9112999999999999")
-                    .holder("ROMA DOVIDENKO")
-                    .expirationDate(LocalDate.of(2028, 3, 31))
-                    .active(true)
-                    .build();
-
-            PaymentCard paymentCard2 = PaymentCard.builder()
-                    .id(2L)
-                    .user(user)
-                    .number("9112991717999999")
-                    .holder("ROMA DOVIDENKO")
-                    .expirationDate(LocalDate.of(2028, 3, 31))
-                    .active(true)
-                    .build();
-
-            PaymentCard paymentCard3 = PaymentCard.builder()
-                    .id(3L)
-                    .user(user)
-                    .number("9046799999999999")
-                    .holder("ROMA DOVIDENKO")
-                    .expirationDate(LocalDate.of(2028, 3, 31))
-                    .active(true)
-                    .build();
-
             Long id = user.getId();
             when(userDao.findUserById(id)).thenReturn(Optional.of(user));
             when(userDao.deactivateUserById(id)).thenReturn(1);

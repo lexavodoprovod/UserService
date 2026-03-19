@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PaymentCardServiceImpl implements PaymentCardService {
 
-    private final int MAX_COUNT_ACTIVE_CARDS = 5;
+    public static final int MAX_COUNT_ACTIVE_CARDS = 5;
 
     private final PaymentCardDao paymentCardDao;
     private final UserDao userDao;
