@@ -1,15 +1,15 @@
-package com.innowise.userservice.model.service.impl;
+package com.innowise.userservice.service.impl;
 
 import com.innowise.userservice.exception.cardexception.*;
 import com.innowise.userservice.exception.userexception.NotActiveUserException;
 import com.innowise.userservice.exception.userexception.UserNotFoundException;
-import com.innowise.userservice.model.dao.PaymentCardDao;
-import com.innowise.userservice.model.dao.UserDao;
-import com.innowise.userservice.model.dto.PaymentCardDto;
-import com.innowise.userservice.model.entity.PaymentCard;
+import com.innowise.userservice.repository.PaymentCardDao;
+import com.innowise.userservice.repository.UserDao;
+import com.innowise.userservice.dto.PaymentCardDto;
+import com.innowise.userservice.entity.PaymentCard;
 import com.innowise.userservice.mapper.PaymentCardMapper;
-import com.innowise.userservice.model.entity.User;
-import com.innowise.userservice.model.service.PaymentCardService;
+import com.innowise.userservice.entity.User;
+import com.innowise.userservice.service.PaymentCardService;
 import com.innowise.userservice.specification.PaymentCardSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

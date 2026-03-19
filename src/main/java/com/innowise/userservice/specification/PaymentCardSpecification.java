@@ -1,6 +1,6 @@
 package com.innowise.userservice.specification;
 
-import com.innowise.userservice.model.entity.PaymentCard;
+import com.innowise.userservice.entity.PaymentCard;
 import org.springframework.data.jpa.domain.Specification;
 
 public class PaymentCardSpecification {

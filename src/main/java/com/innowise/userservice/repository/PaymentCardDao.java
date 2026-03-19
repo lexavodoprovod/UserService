@@ -1,6 +1,6 @@
-package com.innowise.userservice.model.dao;
+package com.innowise.userservice.repository;
 
-import com.innowise.userservice.model.entity.PaymentCard;
+import com.innowise.userservice.entity.PaymentCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;

@@ -1,7 +1,7 @@
 package com.innowise.userservice.controller;
 
-import com.innowise.userservice.model.dto.PaymentCardDto;
-import com.innowise.userservice.model.service.PaymentCardService;
+import com.innowise.userservice.dto.PaymentCardDto;
+import com.innowise.userservice.service.PaymentCardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

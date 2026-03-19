@@ -1,6 +1,6 @@
 package com.innowise.userservice.specification;
 
-import com.innowise.userservice.model.entity.User;
+import com.innowise.userservice.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;

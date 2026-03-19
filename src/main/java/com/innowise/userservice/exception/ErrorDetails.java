@@ -17,6 +17,4 @@ public class ErrorDetails {
     private final int httpStatus;
 
     private final LocalDateTime timestamp;
-
-    private final String path;
 }

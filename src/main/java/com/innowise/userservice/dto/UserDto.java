@@ -1,4 +1,4 @@
-package com.innowise.userservice.model.dto;
+package com.innowise.userservice.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.*;

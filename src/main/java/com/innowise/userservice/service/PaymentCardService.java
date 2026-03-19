@@ -1,6 +1,6 @@
-package com.innowise.userservice.model.service;
+package com.innowise.userservice.service;
 
-import com.innowise.userservice.model.dto.PaymentCardDto;
+import com.innowise.userservice.dto.PaymentCardDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

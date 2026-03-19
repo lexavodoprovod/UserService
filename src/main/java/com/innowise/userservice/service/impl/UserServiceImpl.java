@@ -1,14 +1,14 @@
-package com.innowise.userservice.model.service.impl;
+package com.innowise.userservice.service.impl;
 
 import com.innowise.userservice.exception.cardexception.CardDeactivateException;
 import com.innowise.userservice.exception.userexception.*;
 import com.innowise.userservice.mapper.PaymentCardMapper;
-import com.innowise.userservice.model.dao.PaymentCardDao;
-import com.innowise.userservice.model.dao.UserDao;
-import com.innowise.userservice.model.dto.UserDto;
-import com.innowise.userservice.model.entity.User;
+import com.innowise.userservice.repository.PaymentCardDao;
+import com.innowise.userservice.repository.UserDao;
+import com.innowise.userservice.dto.UserDto;
+import com.innowise.userservice.entity.User;
 import com.innowise.userservice.mapper.UserMapper;
-import com.innowise.userservice.model.service.UserService;
+import com.innowise.userservice.service.UserService;
 import com.innowise.userservice.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;

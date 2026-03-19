@@ -1,11 +1,11 @@
 package com.innowise.userservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.innowise.userservice.model.dao.PaymentCardDao;
-import com.innowise.userservice.model.dao.UserDao;
-import com.innowise.userservice.model.dto.PaymentCardDto;
-import com.innowise.userservice.model.entity.PaymentCard;
-import com.innowise.userservice.model.entity.User;
+import com.innowise.userservice.repository.PaymentCardDao;
+import com.innowise.userservice.repository.UserDao;
+import com.innowise.userservice.dto.PaymentCardDto;
+import com.innowise.userservice.entity.PaymentCard;
+import com.innowise.userservice.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

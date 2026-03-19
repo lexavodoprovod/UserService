@@ -1,6 +1,6 @@
-package com.innowise.userservice.model.dao;
+package com.innowise.userservice.repository;
 
-import com.innowise.userservice.model.entity.User;
+import com.innowise.userservice.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

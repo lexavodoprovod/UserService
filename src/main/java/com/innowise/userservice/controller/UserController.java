@@ -1,7 +1,7 @@
 package com.innowise.userservice.controller;
 
-import com.innowise.userservice.model.dto.UserDto;
-import com.innowise.userservice.model.service.UserService;
+import com.innowise.userservice.dto.UserDto;
+import com.innowise.userservice.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
