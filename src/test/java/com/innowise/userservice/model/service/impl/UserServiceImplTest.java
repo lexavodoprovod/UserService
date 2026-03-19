@@ -7,7 +7,6 @@ import com.innowise.userservice.mapper.UserMapper;
 import com.innowise.userservice.model.dao.PaymentCardDao;
 import com.innowise.userservice.model.dao.UserDao;
 import com.innowise.userservice.model.dto.UserDto;
-import com.innowise.userservice.model.entity.PaymentCard;
 import com.innowise.userservice.model.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
