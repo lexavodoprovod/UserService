@@ -150,9 +150,9 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         }
 
         paymentCardMapper.updatePaymentCardFromDto(paymentCardDto, paymentCard);
-        paymentCardDao.updatePaymentCardById(paymentCard);
+        PaymentCard updatedCard = paymentCardDao.save(paymentCard);
 
-        return paymentCardMapper.toPaymentCardDto(paymentCard);
+        return paymentCardMapper.toPaymentCardDto(updatedCard);
     }
 
     @Override

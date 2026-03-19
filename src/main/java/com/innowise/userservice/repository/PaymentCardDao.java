@@ -26,10 +26,6 @@ public interface PaymentCardDao extends JpaRepository<PaymentCard, Long>, JpaSpe
     Optional<PaymentCard> findPaymentCardByNumber(String number);
 
     @Modifying
-    @Query(value = UPDATE_PAYMENT_CARD_BY_ID_NATIVE, nativeQuery = true)
-    void updatePaymentCardById(@Param("paymentCard") PaymentCard paymentCard);
-
-    @Modifying
     @Query(value = ACTIVATE_PAYMENT_CARD_BY_ID_JPQL)
     int activatePaymentCardById(@Param("id") Long id);
 

@@ -1,4 +1,4 @@
-package com.innowise.userservice.model.service.impl;
+package com.innowise.userservice.service.impl;
 
 import com.innowise.userservice.exception.BusinessException;
 import com.innowise.userservice.exception.EntityNotFoundException;
@@ -335,6 +335,7 @@ class PaymentCardServiceImplTest {
             Long id = 1L;
             when(userDao.findUserById(id)).thenReturn(Optional.of(user));
             when(paymentCardDao.findPaymentCardById(id)).thenReturn(Optional.of(paymentCard));
+            when(paymentCardDao.save(any(PaymentCard.class))).thenReturn(paymentCard);
             when(paymentCardMapper.toPaymentCardDto(paymentCard)).thenReturn(paymentCardDto);
 
             PaymentCardDto result = paymentCardService.updatePaymentCard(paymentCardDto);
@@ -345,7 +346,7 @@ class PaymentCardServiceImplTest {
             verify(userDao).findUserById(id);
             verify(paymentCardMapper).toPaymentCardDto(paymentCard);
             verify(paymentCardMapper).updatePaymentCardFromDto(paymentCardDto, paymentCard);
-            verify(paymentCardDao).updatePaymentCardById(paymentCard);
+            verify(paymentCardDao).save(paymentCard);
 
         }
 

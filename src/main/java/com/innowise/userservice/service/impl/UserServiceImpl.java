@@ -101,9 +101,9 @@ public class UserServiceImpl implements UserService {
 
         userMapper.updateUserFromDto(userDto, user);
 
-        userDao.save(user);
+        User updatedUser = userDao.save(user);
 
-        return userMapper.toUserDto(user);
+        return userMapper.toUserDto(updatedUser);
     }
 
     @Override

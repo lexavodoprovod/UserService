@@ -1,4 +1,4 @@
-package com.innowise.userservice.model.service.impl;
+package com.innowise.userservice.service.impl;
 
 import com.innowise.userservice.exception.BusinessException;
 import com.innowise.userservice.exception.EntityNotFoundException;
