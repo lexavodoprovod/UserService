@@ -37,12 +37,6 @@ public class PaymentCardController {
         return ResponseEntity.ok(paymentCard);
     }
 
-    @GetMapping("/cards-by-user-id/{id}")
-    public ResponseEntity<List<PaymentCardDto>> getAllPaymentCardsByUserId(@PathVariable Long id) {
-        List<PaymentCardDto> paymentCards = paymentCardService.getAllPaymentCardsByUserId(id);
-        return ResponseEntity.ok(paymentCards);
-    }
-
     @GetMapping
     public ResponseEntity<Page<PaymentCardDto>> getAllPaymentCards(
             @RequestParam(required = false) String number,
@@ -63,14 +57,14 @@ public class PaymentCardController {
     }
 
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<PaymentCardDto> activatePaymentCard(@PathVariable Long id){
+    public ResponseEntity<Void> activatePaymentCard(@PathVariable Long id){
         boolean success = paymentCardService.activatePaymentCardById(id);
 
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<PaymentCardDto> deactivatePaymentCard(@PathVariable Long id){
+    public ResponseEntity<Void> deactivatePaymentCard(@PathVariable Long id){
         boolean success = paymentCardService.deactivatePaymentCardById(id);
 
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();

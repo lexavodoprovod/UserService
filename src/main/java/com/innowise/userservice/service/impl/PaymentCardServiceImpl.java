@@ -186,7 +186,6 @@ public class PaymentCardServiceImpl implements PaymentCardService {
             throw new MaxCountCardsException(MAX_COUNT_ACTIVE_CARDS);
         }
 
-
         int success = paymentCardDao.activatePaymentCardById(id);
 
         if(success == 0){

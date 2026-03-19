@@ -1,6 +1,8 @@
 package com.innowise.userservice.controller;
 
+import com.innowise.userservice.dto.PaymentCardDto;
 import com.innowise.userservice.dto.UserDto;
+import com.innowise.userservice.service.PaymentCardService;
 import com.innowise.userservice.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/users", produces = "application/json")
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ public class UserController {
     private static final String SORT_BY = "id";
 
     private final UserService userService;
+    private final PaymentCardService paymentCardService;
 
     @PostMapping
     public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto) {
@@ -31,6 +36,12 @@ public class UserController {
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id){
         UserDto user = userService.getUserById(id);
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/{id}/payment-cards")
+    public ResponseEntity<List<PaymentCardDto>> getAllPaymentCardsByUserId(@PathVariable Long id) {
+        List<PaymentCardDto> paymentCards = paymentCardService.getAllPaymentCardsByUserId(id);
+        return ResponseEntity.ok(paymentCards);
     }
 
     @GetMapping
@@ -54,14 +65,14 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<UserDto> activateUser(@PathVariable Long id){
+    public ResponseEntity<Void> activateUser(@PathVariable Long id){
         boolean success = userService.activateUserById(id);
 
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<UserDto> deactivateUser(@PathVariable Long id){
+    public ResponseEntity<Void> deactivateUser(@PathVariable Long id){
         boolean success = userService.deactivateUserById(id);
 
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();

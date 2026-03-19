@@ -216,75 +216,6 @@ class PaymentCardIntegrationTest {
     }
 
     @Nested
-    @DisplayName("Get Payment Card By User Id Test")
-    class GetPaymentCardByUserIdTest {
-        @Test
-        @DisplayName("Should return list of cards for specific user")
-        void shouldReturnCardsByUserId() throws Exception {
-            User user = User.builder()
-                    .name("Roma")
-                    .surname("Dovidenko")
-                    .email("roma@example.com")
-                    .birthDate(LocalDate.of(2005, 9, 25))
-                    .active(true)
-                    .build();
-            User savedUser = userDao.save(user);
-
-            PaymentCard card1 = PaymentCard.builder()
-                    .number("1111222233334444")
-                    .holder("ROMA DOVIDENKO")
-                    .expirationDate(LocalDate.of(2030, 1, 1))
-                    .user(savedUser)
-                    .build();
-
-            PaymentCard card2 = PaymentCard.builder()
-                    .number("5555666677778888")
-                    .holder("ROMA DOVIDENKO")
-                    .expirationDate(LocalDate.of(2031, 5, 12))
-                    .user(savedUser)
-                    .build();
-
-            paymentCardDao.save(card1);
-            paymentCardDao.save(card2);
-
-            User user3 = User.builder()
-                    .name("Roвыаma")
-                    .surname("Doываыаvidenko")
-                    .email("roвыаыma@example.com")
-                    .birthDate(LocalDate.of(2005, 9, 25))
-                    .active(true)
-                    .build();
-
-            userDao.save(user3);
-
-
-            mockMvc.perform(MockMvcRequestBuilders.get("/payment-cards/cards-by-user-id/" + savedUser.getId())
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(2))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$[0].number").value("1111222233334444"))
-                    .andExpect(MockMvcResultMatchers.jsonPath("$[1].number").value("5555666677778888"));
-        }
-
-        @Test
-        @DisplayName("Should return empty list when user has no cards")
-        void shouldReturnEmptyListWhenNoCards() throws Exception {
-            User user = User.builder()
-                    .name("Roma")
-                    .surname("Dovidenko")
-                    .email("roma.nocards@example.com")
-                    .birthDate(LocalDate.of(2005, 9, 25))
-                    .active(true)
-                    .build();
-            User savedUser = userDao.save(user);
-
-            mockMvc.perform(MockMvcRequestBuilders.get("/payment-cards/cards-by-user-id/" + savedUser.getId()))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(0));
-        }
-    }
-
-    @Nested
     @DisplayName("Get All Active Payment Cards Test")
     class GetAllPaymentCardsTest {
         @Test
@@ -572,7 +503,4 @@ class PaymentCardIntegrationTest {
 
     }
 
-
-
-
-    }
+}
