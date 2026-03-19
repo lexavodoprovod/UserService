@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-index-for-name-column.yaml
+      author: Nikita
+      changes:
+        - createIndex:
+            indexName: idx_user_name
+            tableName: users
+            columns:
+              - column:
+                  name: name
+
+  - changeSet:
+      id: create-index-for-surname-column.yaml
+      author: Nikita
+      changes:
+        - createIndex:
+            indexName: idx_user_surname
+            tableName: users
+            columns:
+              - column:
+                  name: surname
