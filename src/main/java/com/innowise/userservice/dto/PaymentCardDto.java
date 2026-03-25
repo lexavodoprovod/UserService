@@ -31,6 +31,6 @@ public class PaymentCardDto implements Serializable {
     @Future(message = "Card should not be expired")
     private LocalDate expirationDate;
 
-    private boolean active;
+    private Boolean active;
 
 }

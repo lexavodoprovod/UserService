@@ -12,6 +12,7 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "paymentCards", ignore = true)
+    @Mapping(target = "active" , ignore = true)
     User toUser(UserDto userDto);
 
     @Mapping(target = "id", ignore = true)

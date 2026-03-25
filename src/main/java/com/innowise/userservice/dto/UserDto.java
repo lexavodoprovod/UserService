@@ -33,7 +33,7 @@ public class UserDto implements Serializable {
     @NotBlank(message = "Email is required")
     private String email;
 
-    private boolean active;
+    private Boolean active;
 
     private List<PaymentCardDto> paymentCards;
 }

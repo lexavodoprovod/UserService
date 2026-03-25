@@ -12,6 +12,7 @@ public interface PaymentCardMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "active",  ignore = true)
     PaymentCard toPaymentCard(PaymentCardDto paymentCardDto);
 
     @Mapping(target = "id", ignore = true)
