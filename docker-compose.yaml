@@ -1,5 +1,5 @@
 services:
-  app:
+  user-app:
     build: .
     container_name: user-service-app
     ports:
@@ -10,12 +10,12 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
     depends_on:
-      db:
+      user-db:
         condition: service_healthy
-      redis:
+      user-redis:
         condition: service_started
 
-  db:
+  user-db:
     image: postgres
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -30,11 +30,17 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
+  user-redis:
     image: redis:7-alpine
     container_name: user-service-redis
     ports:
       - "6379:6379"
+
+networks:
+  default:
+    external: true
+    name: micro-net
+
 
 
 
