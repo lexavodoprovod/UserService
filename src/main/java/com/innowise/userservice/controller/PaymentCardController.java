@@ -63,7 +63,7 @@ public class PaymentCardController {
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    @PatchMapping("/{id}/deactivate")
+    @DeleteMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivatePaymentCard(@PathVariable Long id){
         boolean success = paymentCardService.deactivatePaymentCardById(id);
 

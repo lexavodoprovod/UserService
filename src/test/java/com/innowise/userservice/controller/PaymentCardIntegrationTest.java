@@ -483,7 +483,8 @@ class PaymentCardIntegrationTest {
             Long cardId = savedCard.getId();
 
 
-            mockMvc.perform(MockMvcRequestBuilders.patch("/payment-cards/" + cardId + "/deactivate")
+            mockMvc.perform(MockMvcRequestBuilders
+                            .delete("/payment-cards/" + cardId + "/deactivate")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isNoContent());
 
@@ -497,7 +498,8 @@ class PaymentCardIntegrationTest {
         void shouldReturn404WhenCardNotFound() throws Exception {
             Long nonExistentId = 999L;
 
-            mockMvc.perform(MockMvcRequestBuilders.patch("/payment-cards/" + nonExistentId + "/deactivate"))
+            mockMvc.perform(MockMvcRequestBuilders
+                            .delete("/payment-cards/" + nonExistentId + "/deactivate"))
                     .andExpect(MockMvcResultMatchers.status().isNotFound());
         }
 

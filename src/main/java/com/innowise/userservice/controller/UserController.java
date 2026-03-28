@@ -71,7 +71,7 @@ public class UserController {
         return success ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    @PatchMapping("/{id}/deactivate")
+    @DeleteMapping("/{id}/deactivate")
     public ResponseEntity<Void> deactivateUser(@PathVariable Long id){
         boolean success = userService.deactivateUserById(id);
 

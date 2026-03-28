@@ -490,7 +490,8 @@ class UserIntegrationTest {
             Long card3Id = savedPaymentCard3.getId();
 
 
-            mockMvc.perform(MockMvcRequestBuilders.patch("/users/" + userId + "/deactivate")
+            mockMvc.perform(MockMvcRequestBuilders
+                            .delete("/users/" + userId + "/deactivate")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isNoContent());
 
@@ -510,7 +511,8 @@ class UserIntegrationTest {
         void shouldReturn404WhenUserNotFound() throws Exception {
             Long nonExistentId = 999L;
 
-            mockMvc.perform(MockMvcRequestBuilders.patch("/users/" + nonExistentId + "/deactivate"))
+            mockMvc.perform(MockMvcRequestBuilders
+                            .delete("/users/" + nonExistentId + "/deactivate"))
                     .andExpect(MockMvcResultMatchers.status().isNotFound());
         }
     }
