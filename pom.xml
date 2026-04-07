@@ -32,6 +32,7 @@
         <testcontainers.version>2.0.3</testcontainers.version>
         <testcontainers.postgresql.version>1.21.4</testcontainers.postgresql.version>
 		<java.version>21</java.version>
+        <srping-eureka.version>5.0.1</srping-eureka.version>
 
         <sonar.projectKey>lexavodoprovod_UserService</sonar.projectKey>
         <sonar.organization>lexavodoprovod</sonar.organization>
@@ -71,6 +72,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${srping-eureka.version}</version>
+            <scope>compile</scope>
         </dependency>
 
 		<dependency>
