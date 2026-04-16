@@ -16,4 +16,6 @@ public interface UserService {
     boolean activateUserById(Long id);
 
     boolean deactivateUserById(Long id);
+
+    boolean deleteUserById(Long id);
 }

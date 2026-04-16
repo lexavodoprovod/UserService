@@ -35,4 +35,6 @@ public interface UserDao extends JpaRepository<User,Long>, JpaSpecificationExecu
     @Modifying
     @Query(value = DEACTIVATE_USER_BY_ID_JPQL)
     int deactivateUserById(@Param("id") Long id);
+
+    int deleteUserById(Long id);
 }

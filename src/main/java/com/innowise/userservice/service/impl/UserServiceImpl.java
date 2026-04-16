@@ -152,4 +152,19 @@ public class UserServiceImpl implements UserService {
 
         return true;
     }
+
+    @Override
+    @Transactional
+    public boolean deleteUserById(Long id) {
+        if (id == null) {
+            throw new UserNullParameterException();
+        }
+
+        userDao.findUserById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        int result = userDao.deleteUserById(id);
+
+        return result != 0;
+    }
 }

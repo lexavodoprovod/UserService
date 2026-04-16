@@ -1,6 +1,7 @@
 package com.innowise.userservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.innowise.userservice.exception.userexception.UserNotFoundException;
 import com.innowise.userservice.mapper.UserMapper;
 import com.innowise.userservice.repository.PaymentCardDao;
 import com.innowise.userservice.repository.UserDao;
@@ -8,6 +9,7 @@ import com.innowise.userservice.dto.UserDto;
 
 import com.innowise.userservice.entity.PaymentCard;
 import com.innowise.userservice.entity.User;
+import com.innowise.userservice.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -41,6 +43,9 @@ class UserIntegrationTest {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private UserServiceImpl userService;
 
     @Autowired
     private PaymentCardDao paymentCardDao;
@@ -516,6 +521,51 @@ class UserIntegrationTest {
                     .andExpect(MockMvcResultMatchers.status().isNotFound());
         }
     }
+
+    @Nested
+    @DisplayName("Delete User Integration Tests")
+    class DeleteUserRequest {
+        @Test
+        @DisplayName("Should delete user successfully")
+        void  shouldDeleteUserSuccessfully() throws Exception {
+            User user = User.builder()
+                    .name("Ivan")
+                    .surname("Ivanov")
+                    .email("ivan@test.com")
+                    .birthDate(LocalDate.of(2000, 1, 1))
+                    .active(true)
+                    .build();
+
+            User savedUser = userDao.save(user);
+
+            Long userId = savedUser.getId();
+
+            mockMvc.perform(MockMvcRequestBuilders.delete("/users/" + userId)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+
+            UserNotFoundException userNotFoundException = assertThrows(
+                    UserNotFoundException.class,
+                    () -> userService.deleteUserById(userId)
+            );
+
+            assertNotNull(userNotFoundException);
+        }
+
+        @Test
+        @DisplayName("Should return 404 when user non-exist")
+        void  shouldReturn404WhenUserNotFound() throws Exception {
+            Long userId = 999L;
+
+            mockMvc.perform(MockMvcRequestBuilders.delete("/users/" + userId)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+        }
+
+    }
+
+
 
 
 }

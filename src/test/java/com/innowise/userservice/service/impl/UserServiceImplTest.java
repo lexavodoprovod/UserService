@@ -2,6 +2,8 @@ package com.innowise.userservice.service.impl;
 
 import com.innowise.userservice.exception.BusinessException;
 import com.innowise.userservice.exception.EntityNotFoundException;
+import com.innowise.userservice.exception.userexception.UserNotFoundException;
+import com.innowise.userservice.exception.userexception.UserNullParameterException;
 import com.innowise.userservice.mapper.PaymentCardMapper;
 import com.innowise.userservice.mapper.UserMapper;
 import com.innowise.userservice.repository.PaymentCardDao;
@@ -374,5 +376,58 @@ class UserServiceImplTest {
             verify(userDao, times(1)).findUserById(id);
             verifyNoMoreInteractions(userDao);
         }
+    }
+
+    @Nested
+    @DisplayName("Delete Users Tests")
+    class DeleteUsersTests{
+
+        @Test
+        @DisplayName("Should delete user successfully")
+        void shouldDeleteUserSuccessfully(){
+            Long id = user.getId();
+
+            when(userDao.findUserById(id)).thenReturn(Optional.of(user));
+            when(userDao.deleteUserById(id)).thenReturn(1);
+
+            boolean success = userService.deleteUserById(id);
+
+            assertTrue(success);
+
+
+        }
+
+        @Test
+        @DisplayName("Should throw UserNullParameterException if id is null")
+        void  shouldThrowUserNullParameterExceptionIfIdIsNull() {
+            Long id = null;
+
+            UserNullParameterException userNullParameterException = assertThrows(
+                    UserNullParameterException.class,
+                    () -> userService.deleteUserById(id)
+            );
+
+            assertNotNull(userNullParameterException);
+            verifyNoInteractions(userDao);
+
+        }
+
+        @Test
+        @DisplayName("Should throw UserNotFoundException")
+        void shouldThrowUserNotFoundExceptionIfUserIsNotExist() {
+            Long id = 1L;
+
+            when(userDao.findUserById(id)).thenReturn(Optional.empty());
+
+            UserNotFoundException userNotFoundException = assertThrows(
+                    UserNotFoundException.class,
+                    () -> userService.deleteUserById(id)
+            );
+
+            assertNotNull(userNotFoundException);
+            verify(userDao, times(0)).deleteUserById(id);
+        }
+
+
     }
 }
