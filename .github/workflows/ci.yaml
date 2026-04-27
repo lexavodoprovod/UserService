@@ -2,7 +2,7 @@ name: UserService CI
 
 on:
   push:
-    branches: [ "main", "ci-pipeline" ]
+    branches: [ "main", "tasks/USER-1" ]
   pull_request:
     branches: [ "main" ]
 
