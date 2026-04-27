@@ -1,72 +1,23 @@
 package com.innowise.userservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.innowise.userservice.repository.PaymentCardDao;
-import com.innowise.userservice.repository.UserDao;
 import com.innowise.userservice.dto.PaymentCardDto;
 import com.innowise.userservice.entity.PaymentCard;
 import com.innowise.userservice.entity.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Testcontainers
-class PaymentCardIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private UserDao userDao;
-
-    @Autowired
-    private PaymentCardDao paymentCardDao;
-
-    private ObjectMapper objectMapper;
+class PaymentCardIntegrationTest extends BaseIT {
 
 
-    @BeforeEach
-    void setUp() {
-        userDao.deleteAll();
-        paymentCardDao.deleteAll();
-
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
-    }
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
-            .withDatabaseName("testdb")
-            .withUsername("testuser")
-            .withPassword("testpass");
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
 
     @Nested
     @DisplayName("Add Payment Card Test")

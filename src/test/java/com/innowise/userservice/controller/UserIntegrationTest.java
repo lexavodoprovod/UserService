@@ -1,93 +1,38 @@
 package com.innowise.userservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.innowise.userservice.exception.userexception.UserNotFoundException;
 import com.innowise.userservice.mapper.UserMapper;
-import com.innowise.userservice.repository.PaymentCardDao;
-import com.innowise.userservice.repository.UserDao;
 import com.innowise.userservice.dto.UserDto;
 
 import com.innowise.userservice.entity.PaymentCard;
 import com.innowise.userservice.entity.User;
-import com.innowise.userservice.service.impl.UserServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Testcontainers
-class UserIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+class UserIntegrationTest extends BaseIT {
 
-    @Autowired
-    private UserDao userDao;
 
-    @Autowired
-    private UserServiceImpl userService;
-
-    @Autowired
-    private PaymentCardDao paymentCardDao;
 
     @Autowired
     private UserMapper userMapper;
 
-    private ObjectMapper objectMapper;
-
-    private UserDto userDto;
-
-    @BeforeEach
-    void setUp() {
-        userDao.deleteAll();
-        paymentCardDao.deleteAll();
-
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
-
-        userDto = UserDto.builder()
-                .id(1L)
-                .name("Roma")
-                .surname("Dovidenko")
-                .birthDate(LocalDate.of(2005, 9, 25))
-                .email("dovidenko@gmail.com")
-                .active(true)
-                .build();
-
-    }
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
-            .withDatabaseName("testdb")
-            .withUsername("testuser")
-            .withPassword("testpass");
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
+    private UserDto userDto = UserDto.builder()
+            .id(1L)
+            .name("Roma")
+            .surname("Dovidenko")
+            .birthDate(LocalDate.of(2005, 9, 25))
+            .email("dovidenko@gmail.com")
+            .active(true)
+            .build();
 
 
     @Nested
