@@ -5,3 +5,9 @@ spring:
     redis:
       repositories:
         enabled: false
+  cloud:
+    discovery:
+      enabled: false
+eureka:
+  client:
+    enabled: false
