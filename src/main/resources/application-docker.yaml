@@ -6,6 +6,9 @@ spring:
       host: user-redis
       port: 6379
 eureka:
+  instance:
+    prefer-ip-address: false
+    hostname: ${spring.application.name}
   client:
     serviceUrl:
       defaultZone: http://discovery-server:8761/eureka/
