@@ -17,6 +17,11 @@ public class PaymentCardSpecification {
     }
 
     public static Specification<PaymentCard> isActive() {
-        return (root, query, cb) -> cb.equal(root.get("active"), true);
+        return (root, query, cb) -> cb.isTrue(root.get("active"));
+    }
+
+    public static Specification<PaymentCard> byUserId(Long userId) {
+        return (root, query, cb) -> cb.equal(root.get("user").get("id"), userId);
+
     }
 }

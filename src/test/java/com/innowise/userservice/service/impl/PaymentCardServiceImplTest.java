@@ -240,22 +240,31 @@ class PaymentCardServiceImplTest {
     @Nested
     @DisplayName("Get All Payment Cards By User Id Tests")
     class GetAllPaymentCardsByUserIdTests {
+        String number = "9112";
+        Pageable pageable = PageRequest.of(0, 15);
+
 
         @Test
         @DisplayName("Should return list of cards bu user id successfully")
         void shouldReturnAllPaymentCardsSuccessfully() {
             Long userId = 1L;
+
+            List<PaymentCard> paymentCards = List.of(paymentCard);
+            Page<PaymentCard> paymentCardPage = new PageImpl<>(paymentCards, pageable, paymentCards.size());
+
+
             when(userDao.findUserById(userId)).thenReturn(Optional.of(user));
-            when(paymentCardDao.findAllByUserId(userId)).thenReturn(List.of(paymentCard));
+            when(paymentCardDao.findAll(any(Specification.class), eq(pageable))).thenReturn(paymentCardPage);
             when(paymentCardMapper.toPaymentCardDto(paymentCard)).thenReturn(paymentCardDto);
 
-            List<PaymentCardDto> result = paymentCardService.getAllPaymentCardsByUserId(userId);
+            Page<PaymentCardDto> result = paymentCardService.getAllPaymentCardsByUserId(userId, number, pageable);
 
             assertNotNull(result);
-            assertEquals(List.of(paymentCardDto), result);
-            verify(userDao, times(1)).findUserById(userId);
-            verify(paymentCardDao, times(1)).findAllByUserId(userId);
-            verify(paymentCardMapper, times(1)).toPaymentCardDto(paymentCard);
+            assertEquals(1, result.getTotalElements());
+            assertEquals(paymentCardDto.getId(), result.getContent().get(0).getId());
+
+            verify(paymentCardDao).findAll(any(Specification.class), eq(pageable));
+            verify(paymentCardMapper).toPaymentCardDto(any(PaymentCard.class));
         }
 
         @Test
@@ -265,7 +274,23 @@ class PaymentCardServiceImplTest {
 
             BusinessException businessException = assertThrows(
                     BusinessException.class,
-                    () -> paymentCardService.getAllPaymentCardsByUserId(id)
+                    () -> paymentCardService.getAllPaymentCardsByUserId(id, null, pageable )
+            );
+
+            assertNotNull(businessException);
+            verifyNoInteractions(paymentCardDao);
+            verifyNoInteractions(userDao);
+            verifyNoMoreInteractions(paymentCardMapper);
+        }
+
+        @Test
+        @DisplayName("Should throw BusinessException when id pageable null")
+        void shouldThrowExceptionWhenPageableIsNull() {
+            Long id = 1L;
+
+            BusinessException businessException = assertThrows(
+                    BusinessException.class,
+                    () -> paymentCardService.getAllPaymentCardsByUserId(id, null, null)
             );
 
             assertNotNull(businessException);
@@ -282,7 +307,63 @@ class PaymentCardServiceImplTest {
 
             EntityNotFoundException entityNotFoundException = assertThrows(
                     EntityNotFoundException.class,
-                    () -> paymentCardService.getAllPaymentCardsByUserId(id));
+                    () -> paymentCardService.getAllPaymentCardsByUserId(id, null, pageable));
+
+            assertNotNull(entityNotFoundException);
+            verifyNoInteractions(paymentCardDao);
+            verifyNoInteractions(paymentCardMapper);
+
+        }
+    }
+
+    @Nested
+    @DisplayName("Get All Active Payment Cards By User Id Tests")
+    class GetAllActivePaymentCardsByUserIdTests {
+
+        @Test
+        @DisplayName("Should return list of active cards bu user id successfully")
+        void shouldReturnAllPaymentCardsSuccessfully() {
+            Long userId = 1L;
+            when(userDao.findUserById(userId)).thenReturn(Optional.of(user));
+            when(paymentCardDao.findAllByUserIdAndActiveTrue(userId)).thenReturn(List.of(paymentCard));
+            when(paymentCardMapper.toPaymentCardDto(paymentCard)).thenReturn(paymentCardDto);
+
+            List<PaymentCardDto> result = paymentCardService.getAllActiveCardsByUserId(userId);
+
+            assertNotNull(result);
+            assertEquals(List.of(paymentCardDto), result);
+            assertEquals(paymentCardDto.getUserId(), userId);
+
+            verify(userDao, times(1)).findUserById(userId);
+            verify(paymentCardDao, times(1)).findAllByUserIdAndActiveTrue(userId);
+            verify(paymentCardMapper, times(1)).toPaymentCardDto(paymentCard);
+        }
+
+        @Test
+        @DisplayName("Should throw BusinessException when id id null")
+        void shouldThrowExceptionWhenIdIsNull() {
+            Long id = null;
+
+            BusinessException businessException = assertThrows(
+                    BusinessException.class,
+                    () -> paymentCardService.getAllActiveCardsByUserId(id)
+            );
+
+            assertNotNull(businessException);
+            verifyNoInteractions(paymentCardDao);
+            verifyNoInteractions(userDao);
+            verifyNoMoreInteractions(paymentCardMapper);
+        }
+
+        @Test
+        @DisplayName("Should throw EntityNotFoundException when user is not exist")
+        void shouldThrowEntityNotFoundExceptionWhenUserIsNotExist() {
+            Long id = 1L;
+            when(userDao.findUserById(id)).thenReturn(Optional.empty());
+
+            EntityNotFoundException entityNotFoundException = assertThrows(
+                    EntityNotFoundException.class,
+                    () -> paymentCardService.getAllActiveCardsByUserId(id));
 
             assertNotNull(entityNotFoundException);
             verifyNoInteractions(paymentCardDao);

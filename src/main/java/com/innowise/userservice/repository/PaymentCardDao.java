@@ -21,6 +21,8 @@ public interface PaymentCardDao extends JpaRepository<PaymentCard, Long>, JpaSpe
 
     List<PaymentCard> findAllByUserId(Long id);
 
+    List<PaymentCard> findAllByUserIdAndActiveTrue(Long id);
+
     boolean existsByNumber(String number);
 
     Optional<PaymentCard> findPaymentCardByNumber(String number);

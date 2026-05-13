@@ -11,7 +11,9 @@ public interface PaymentCardService {
 
     PaymentCardDto getPaymentCardById(Long id);
 
-    List<PaymentCardDto> getAllPaymentCardsByUserId(Long id);
+    Page<PaymentCardDto> getAllPaymentCardsByUserId(Long id, String number, Pageable pageable);
+
+    List<PaymentCardDto> getAllActiveCardsByUserId(Long id);
 
     Page<PaymentCardDto> getAllPaymentCards(String number, Pageable pageable);
 

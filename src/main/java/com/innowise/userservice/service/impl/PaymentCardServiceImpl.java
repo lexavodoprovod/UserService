@@ -12,14 +12,12 @@ import com.innowise.userservice.entity.User;
 import com.innowise.userservice.service.PaymentCardService;
 import com.innowise.userservice.specification.PaymentCardSpecification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.data.redis.autoconfigure.DataRedisProperties;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,7 +96,27 @@ public class PaymentCardServiceImpl implements PaymentCardService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PaymentCardDto> getAllPaymentCardsByUserId(Long id) {
+    public Page<PaymentCardDto> getAllPaymentCardsByUserId(Long id, String number, Pageable pageable) {
+
+        if(id == null || pageable == null){
+            throw new CardNullParameterException();
+        }
+
+        userDao.findUserById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        Specification<PaymentCard> paymentCardSpecification = Specification
+                .where(PaymentCardSpecification.byNumber(number))
+                .and(PaymentCardSpecification.byUserId(id));
+
+        Page<PaymentCard> paymentCardPage = paymentCardDao.findAll(paymentCardSpecification, pageable);
+
+        return paymentCardPage.map(paymentCardMapper::toPaymentCardDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PaymentCardDto> getAllActiveCardsByUserId(Long id) {
 
         if(id == null){
             throw new CardNullParameterException();
@@ -107,12 +125,11 @@ public class PaymentCardServiceImpl implements PaymentCardService {
         userDao.findUserById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        List<PaymentCard> paymentCards = paymentCardDao.findAllByUserId(id);
+        List<PaymentCard> paymentCards = paymentCardDao.findAllByUserIdAndActiveTrue(id);
 
         return paymentCards.stream()
                 .map(paymentCardMapper::toPaymentCardDto)
                 .toList();
-
     }
 
     @Override
