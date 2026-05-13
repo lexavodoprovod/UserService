@@ -38,12 +38,25 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/{id}/payment-cards")
-    public ResponseEntity<List<PaymentCardDto>> getAllPaymentCardsByUserId(@PathVariable Long id) {
-        List<PaymentCardDto> paymentCards = paymentCardService.getAllPaymentCardsByUserId(id);
+    @GetMapping("/{id}/payment-cards-all")
+    public ResponseEntity<Page<PaymentCardDto>> getAllPaymentCardsByUserId(
+            @PathVariable Long id,
+            @RequestParam(required = false) String number,
+            @PageableDefault(size = PAGINATION_SIZE, sort = SORT_BY ) Pageable pageable
+    ) {
+
+        Page<PaymentCardDto> paymentCards = paymentCardService.getAllPaymentCardsByUserId(id, number,pageable);
         return ResponseEntity.ok(paymentCards);
     }
 
+    @GetMapping("/{id}/payment-cards")
+    public ResponseEntity<List<PaymentCardDto>> getAllActiveCardsByUserId(
+            @PathVariable Long id
+    ){
+        List<PaymentCardDto> activeCardsPage = paymentCardService.getAllActiveCardsByUserId(id);
+
+        return ResponseEntity.ok(activeCardsPage);
+    }
     @GetMapping
     public ResponseEntity<Page<UserDto>> getAllUsers(
             @RequestParam(required = false) String name,
