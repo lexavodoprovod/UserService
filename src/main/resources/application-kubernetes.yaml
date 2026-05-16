@@ -7,7 +7,6 @@ spring:
       port: 6379
 eureka:
   instance:
-    prefer-ip-address: false
     hostname: ${spring.application.name}
   client:
     serviceUrl:
